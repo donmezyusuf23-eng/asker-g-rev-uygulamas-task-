@@ -258,13 +258,21 @@ class _TaskFormModalState extends State<TaskFormModal> {
                   child: OutlinedButton.icon(
                     icon: const Icon(Icons.schedule_rounded, size: 16),
                     label: Text(
-                      _dueTime == null ? 'Saat Seç' : _dueTime!.format(context),
+                      _dueTime == null
+                          ? 'Saat Seç'
+                          : "${_dueTime!.hour.toString().padLeft(2, '0')}:${_dueTime!.minute.toString().padLeft(2, '0')}",
                       style: const TextStyle(fontSize: 13),
                     ),
                     onPressed: () async {
                       final picked = await showTimePicker(
                         context: context,
                         initialTime: _dueTime ?? TimeOfDay.now(),
+                        builder: (BuildContext context, Widget? child) {
+                          return MediaQuery(
+                            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                            child: child!,
+                          );
+                        },
                       );
                       if (picked != null) {
                         setState(() => _dueTime = picked);
