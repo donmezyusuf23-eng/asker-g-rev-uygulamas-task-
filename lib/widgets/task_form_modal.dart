@@ -8,10 +8,11 @@ import '../providers/task_provider.dart';
 class TaskFormModal extends StatefulWidget {
   final TaskItem? taskToEdit;
   final String? initialProjectId;
+  final DateTime? initialDate;
 
-  const TaskFormModal({super.key, this.taskToEdit, this.initialProjectId});
+  const TaskFormModal({super.key, this.taskToEdit, this.initialProjectId, this.initialDate});
 
-  static void show(BuildContext context, {TaskItem? taskToEdit, String? initialProjectId}) {
+  static void show(BuildContext context, {TaskItem? taskToEdit, String? initialProjectId, DateTime? initialDate}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -22,6 +23,7 @@ class TaskFormModal extends StatefulWidget {
         child: TaskFormModal(
           taskToEdit: taskToEdit,
           initialProjectId: initialProjectId,
+          initialDate: initialDate,
         ),
       ),
     );
@@ -59,7 +61,7 @@ class _TaskFormModalState extends State<TaskFormModal> {
       _isTopPriority = edit.isTopPriority;
     } else {
       _selectedProjectId = widget.initialProjectId ?? 'personal';
-      _dueDate = DateTime.now();
+      _dueDate = widget.initialDate ?? DateTime.now();
       _dueTime = const TimeOfDay(hour: 12, minute: 0);
     }
   }

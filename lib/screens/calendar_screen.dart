@@ -153,7 +153,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         const SizedBox(height: 12),
                         OutlinedButton.icon(
                           onPressed: () {
-                            TaskFormModal.show(context);
+                            TaskFormModal.show(context, initialDate: _selectedDate);
                           },
                           icon: const Icon(Icons.add, size: 18),
                           label: const Text('Bu Güne Görev Ekle'),
@@ -172,7 +172,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => TaskFormModal.show(context),
+        onPressed: () => TaskFormModal.show(context, initialDate: _selectedDate),
         child: const Icon(Icons.add_rounded),
       ),
     );
