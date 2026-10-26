@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/task_provider.dart';
@@ -85,127 +84,6 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showBackupDialog(BuildContext context) async {
-    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-    final backupJson = await taskProvider.exportBackup();
-
-    if (!context.mounted) return;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.backup_rounded, color: Colors.blueAccent),
-            SizedBox(width: 8),
-            Text('Veri Yedekleme'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Tüm görevleriniz, kategorileriniz ve istatistikleriniz JSON formatında hazırlandı. Bu metni kopyalayıp güvenli bir yere kaydedebilirsiniz:',
-              style: TextStyle(fontSize: 13),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              height: 120,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: SingleChildScrollView(
-                child: SelectableText(
-                  backupJson,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton.icon(
-            icon: const Icon(Icons.copy_rounded, size: 18),
-            label: const Text('Panoya Kopyala'),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: backupJson));
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Yedek panoya kopyalandı!')),
-              );
-            },
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Kapat'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showRestoreDialog(BuildContext context) {
-    final jsonCtrl = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.restore_rounded, color: Colors.green),
-            SizedBox(width: 8),
-            Text('Yedeği Geri Yükle'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Daha önce kopyaladığınız yedek JSON metnini buraya yapıştırın:',
-              style: TextStyle(fontSize: 13),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: jsonCtrl,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: '{\n  "version": 1,\n  "tasks": [...]\n}',
-                hintStyle: TextStyle(fontFamily: 'monospace', fontSize: 11),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('İptal'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final text = jsonCtrl.text.trim();
-              if (text.isNotEmpty) {
-                final success = await Provider.of<TaskProvider>(context, listen: false).importBackup(text);
-                if (!context.mounted) return;
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(success ? 'Yedek başarıyla geri yüklendi!' : 'Geçersiz yedek formatı!'),
-                    backgroundColor: success ? Colors.green : Colors.red,
-                  ),
-                );
-              }
-            },
-            child: const Text('Geri Yükle'),
-          ),
-        ],
       ),
     );
   }
@@ -323,20 +201,6 @@ class SettingsScreen extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                ListTile(
-                  leading: const Icon(Icons.download_rounded, color: Colors.indigo),
-                  title: const Text('Yedek Al (JSON Dışa Aktar)'),
-                  subtitle: const Text('Görevlerinizi metin dosyası olarak yedekleyin'),
-                  onTap: () => _showBackupDialog(context),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.upload_rounded, color: Colors.teal),
-                  title: const Text('Yedeği Geri Yükle'),
-                  subtitle: const Text('Önceden aldığınız yedeği içe aktarın'),
-                  onTap: () => _showRestoreDialog(context),
-                ),
-                const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.security_rounded, color: Colors.blueGrey),
                   title: const Text('Veri Gizliliği'),
